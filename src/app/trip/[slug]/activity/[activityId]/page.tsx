@@ -4,18 +4,24 @@ import ActivityDetailClient from '@/components/activity/ActivityDetailClient'
 import TopBar from '@/components/layout/TopBar'
 import BottomNav from '@/components/layout/BottomNav'
 
+function findActivity(id: string) {
+  const all = [
+    ...SEED_ACTIVITIES,
+    ...(OPTIONAL_ACTIVITIES || []),
+    ...(EXTRA_ACTIVITIES || []),
+  ]
+  for (const act of all) {
+    if (act.id === id) return act
+  }
+  return null
+}
+
 export default function ActivityPage({
   params,
 }: {
   params: { slug: string; id: string }
 }) {
-  const allActivities = [
-    ...SEED_ACTIVITIES,
-    ...(OPTIONAL_ACTIVITIES || []),
-    ...(EXTRA_ACTIVITIES || []),
-  ]
-
-  const activity = allActivities.find((a) => a.id === params.id)
+  const activity = findActivity(params.id)
 
   if (!activity) notFound()
 
