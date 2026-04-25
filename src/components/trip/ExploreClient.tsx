@@ -77,7 +77,7 @@ export default function ExploreClient({ activities, days, tripSlug }: Props) {
   const notPlannedCount = allActivities.length - plannedCount
 
   return (
-    <div className="px-4 pt-4 pb-24">
+    <div className="px-4 pt-4 pb-24 max-w-lg mx-auto">
 
       {/* Stats bar */}
       <div className="flex gap-2 mb-4">
