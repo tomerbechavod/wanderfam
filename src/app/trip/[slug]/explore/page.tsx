@@ -1,29 +1,24 @@
-import { SEED_TRIP, SEED_ACTIVITIES } from '@/lib/seed-data'
-import { notFound } from 'next/navigation'
-import TopBar from '@/components/layout/TopBar'
-import BottomNav from '@/components/layout/BottomNav'
+import { SEED_ACTIVITIES, SEED_DAYS, OPTIONAL_ACTIVITIES, EXTRA_ACTIVITIES } from '@/lib/seed-data'
 import ExploreClient from '@/components/trip/ExploreClient'
 
-interface Props {
-  params: { slug: string }
-  searchParams: { filter?: string; q?: string }
-}
-
-export default async function ExplorePage({ params, searchParams }: Props) {
-  if (params.slug !== SEED_TRIP.slug) notFound()
+export default function ExplorePage({ params }: { params: { slug: string } }) {
+  const allActivities = [
+    ...SEED_ACTIVITIES,
+    ...(OPTIONAL_ACTIVITIES || []),
+    ...(EXTRA_ACTIVITIES || []),
+  ]
 
   return (
-    <div className="min-h-screen bg-sand-50">
-      <TopBar tripSlug={params.slug} subtitle="Browse all activities" />
-      <main className="max-w-lg mx-auto pb-24">
-        <ExploreClient
-          activities={SEED_ACTIVITIES}
-          tripSlug={params.slug}
-          initialFilter={searchParams.filter}
-          initialQuery={searchParams.q}
-        />
-      </main>
-      <BottomNav tripSlug={params.slug} />
+    <div className="min-h-screen bg-sand-50 pb-24">
+      <div className="sticky top-0 z-40 bg-white border-b border-sand-200 px-4 py-3">
+        <h1 className="font-serif text-lg font-semibold text-slate-900">גלה אטרקציות</h1>
+        <p className="text-xs text-slate-400 mt-0.5">{allActivities.length} אטרקציות באוסטריה ומינכן</p>
+      </div>
+      <ExploreClient
+        activities={allActivities}
+        days={SEED_DAYS}
+        tripSlug={params.slug}
+      />
     </div>
   )
 }
