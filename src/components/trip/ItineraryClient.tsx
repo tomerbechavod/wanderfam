@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { format, parseISO, isToday } from 'date-fns'
-import { MapPin, CloudRain, Edit3, X, Plus, Trash2, Check, ChevronDown, ChevronUp } from 'lucide-react'
+import { MapPin, CloudRain, Edit3, X, Plus, Trash2, Check, ChevronDown, ChevronUp, Navigation } from 'lucide-react'
 import { cn, getMockWeather } from '@/lib/utils'
 import TimelineSlot from '@/components/trip/TimelineSlot'
-import { SEED_ACTIVITIES, OPTIONAL_ACTIVITIES } from '@/lib/seed-data'
+import { SEED_ACTIVITIES, OPTIONAL_ACTIVITIES, EXTRA_ACTIVITIES } from '@/lib/seed-data'
 import type { ItineraryDay, ItinerarySlot } from '@/types'
 
 interface Props {
@@ -18,6 +18,14 @@ const PHASE_COLORS: Record<string, string> = {
   transit: 'bg-slate-100 text-slate-600 border-slate-200',
   austria: 'bg-forest-50 text-forest-700 border-forest-200',
   munich: 'bg-blue-50 text-blue-700 border-blue-200',
+}
+
+function distanceKm(lat1: number, lng1: number, lat2: number, lng2: number) {
+  const R = 6371
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
 }
 
 export default function ItineraryClient({ days, tripSlug, initialDayId }: Props) {
@@ -77,7 +85,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
   }
 
   const addActivity = (activityId: string, fromOptional = false) => {
-    const allActivities = [...SEED_ACTIVITIES, ...(OPTIONAL_ACTIVITIES || [])]
+    const allActivities = [...SEED_ACTIVITIES, ...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || [])]
     const act = allActivities.find(a => a.id === activityId)
     if (!act || !activeDay) return
     const newSlot: ItinerarySlot = {
@@ -110,9 +118,37 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
     setLocalDays(prev => prev.map(d => d.id === activeDayId ? { ...d, slots } : d))
   }
 
+  // All activities combined
+  const allActivities = [...SEED_ACTIVITIES, ...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || [])]
   const inDayIds = new Set(activeDay?.slots.map(s => s.activity_id).filter(Boolean))
+
+  // Activities already in THIS day's plan (from all days)
+  const inAnyDayIds = new Set(
+    localDays.flatMap(d => d.slots.map(s => s.activity_id).filter(Boolean))
+  )
+
+  // For add panel
   const availableMain = SEED_ACTIVITIES.filter(a => !inDayIds.has(a.id))
-  const availableOptional = (OPTIONAL_ACTIVITIES || []).filter(a => !inDayIds.has(a.id))
+  const availableOptional = [...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || [])].filter(a => !inDayIds.has(a.id))
+
+  // Nearby suggestions — closest 3 activities not in this day, matching phase
+  const nearbySuggestions = activeDay
+    ? allActivities
+        .filter(a => !inDayIds.has(a.id) && (a.phase === activeDay.phase || activeDay.phase === 'transit'))
+        .map(a => ({
+          ...a,
+          dist: distanceKm(activeDay.base_lat, activeDay.base_lng, a.lat, a.lng)
+        }))
+        .sort((a, b) => a.dist - b.dist)
+        .slice(0, 3)
+    : []
+
+  // Summary: which SEED_ACTIVITIES are in plan vs not
+  const inPlanIds = new Set(
+    localDays.flatMap(d => d.slots.map(s => s.activity_id).filter(Boolean))
+  )
+  const inPlanActivities = SEED_ACTIVITIES.filter(a => inPlanIds.has(a.id))
+  const notInPlanActivities = SEED_ACTIVITIES.filter(a => !inPlanIds.has(a.id))
 
   return (
     <div>
@@ -197,12 +233,8 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
             <div className="mb-4 bg-white border border-sand-200 rounded-2xl overflow-hidden shadow-sm">
               <div className="px-4 py-3 border-b border-sand-100 flex items-center justify-between bg-sand-50">
                 <p className="font-semibold text-sm text-slate-800">➕ הוסף פעילות ליום זה</p>
-                <button onClick={() => setShowAddPanel(false)}>
-                  <X size={16} className="text-slate-400" />
-                </button>
+                <button onClick={() => setShowAddPanel(false)}><X size={16} className="text-slate-400" /></button>
               </div>
-
-              {/* Main activities */}
               <div>
                 <p className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wide bg-white border-b border-sand-100">
                   📋 פעילויות בתוכנית
@@ -223,27 +255,19 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
                   ))}
                 </div>
               </div>
-
-              {/* Optional activities */}
               <div className="border-t border-sand-200">
-                <button
-                  onClick={() => setShowOptional(!showOptional)}
+                <button onClick={() => setShowOptional(!showOptional)}
                   className="w-full flex items-center justify-between px-4 py-3 bg-amber-50 hover:bg-amber-100 transition-colors">
                   <div className="flex items-center gap-2">
                     <span className="text-sm">💡</span>
                     <p className="text-sm font-semibold text-amber-800">פעילויות אופציונליות</p>
-                    <span className="text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full">
-                      {availableOptional.length} לא בתוכנית
-                    </span>
+                    <span className="text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full">{availableOptional.length} זמינות</span>
                   </div>
                   {showOptional ? <ChevronUp size={16} className="text-amber-600" /> : <ChevronDown size={16} className="text-amber-600" />}
                 </button>
-
                 {showOptional && (
                   <div className="divide-y divide-sand-100 max-h-64 overflow-y-auto">
-                    {availableOptional.length === 0 ? (
-                      <p className="text-sm text-slate-400 text-center py-4">אין פעילויות אופציונליות זמינות</p>
-                    ) : availableOptional.map(act => (
+                    {availableOptional.map(act => (
                       <button key={act.id} onClick={() => addActivity(act.id, true)}
                         className="w-full flex items-center gap-3 px-4 py-3 hover:bg-amber-50 text-right">
                         <span className="text-xl flex-shrink-0">{act.emoji}</span>
@@ -252,13 +276,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
                             <p className="text-sm font-medium text-slate-900 truncate">{act.title_he || act.title}</p>
                             <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full flex-shrink-0">אופציה</span>
                           </div>
-                          <p className="text-xs text-slate-400 truncate">{act.description_he?.slice(0, 60)}...</p>
-                          <p className="text-xs text-slate-400 mt-0.5">
-                            {act.location_name} · {act.duration_minutes} דק׳
-                            {act.google_rating ? ` · ⭐ ${act.google_rating}` : ''}
-                            {act.price_level === 'free' ? ' · חינם' : ''}
-                            {act.is_rainy_day_alt ? ' · 🌧️ ליום גשום' : ''}
-                          </p>
+                          <p className="text-xs text-slate-400">{act.location_name} · {act.duration_minutes} דק׳{act.google_rating ? ` · ⭐ ${act.google_rating}` : ''}</p>
                         </div>
                         <Plus size={16} className="text-amber-500 flex-shrink-0" />
                       </button>
@@ -276,6 +294,18 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
               <p className="text-xs text-blue-700">גשם צפוי — שקול חלופות מקורות</p>
             </div>
           )}
+
+          {/* Plan status summary */}
+          <div className="flex gap-2 mb-3 flex-wrap">
+            <div className="flex items-center gap-1.5 bg-forest-50 border border-forest-200 rounded-xl px-3 py-1.5">
+              <Check size={12} className="text-forest-600" />
+              <span className="text-xs text-forest-700 font-medium">{inPlanActivities.length} בתוכנית</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+              <span className="text-xs">⏳</span>
+              <span className="text-xs text-slate-600 font-medium">{notInPlanActivities.length} לא בתוכנית</span>
+            </div>
+          </div>
 
           {/* Timeline */}
           <div className="pt-1">
@@ -296,14 +326,9 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
                     </button>
                   </div>
                 )}
-                <TimelineSlot
-                  slot={slot}
-                  tripSlug={tripSlug}
-                  isLast={i === activeDay.slots.length - 1}
-                />
+                <TimelineSlot slot={slot} tripSlug={tripSlug} isLast={i === activeDay.slots.length - 1} />
               </div>
             ))}
-
             {activeDay.slots.length === 0 && (
               <div className="text-center py-10 text-slate-400">
                 <p className="text-3xl mb-2">📭</p>
@@ -318,6 +343,44 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
             )}
           </div>
 
+          {/* Nearby suggestions */}
+          {nearbySuggestions.length > 0 && (
+            <div className="mt-5 mb-2">
+              <div className="flex items-center gap-2 mb-3">
+                <Navigation size={14} className="text-amber-500" />
+                <h3 className="text-sm font-semibold text-slate-700">קרוב אליך היום</h3>
+                <span className="text-xs text-slate-400">— עוד לא בתוכנית</span>
+              </div>
+              <div className="space-y-2">
+                {nearbySuggestions.map((act: any) => (
+                  <div key={act.id}
+                    className="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex items-center gap-3">
+                    <span className="text-2xl flex-shrink-0">{act.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-sm font-semibold text-slate-900 truncate">{act.title_he || act.title}</p>
+                        {!inPlanIds.has(act.id) && (
+                          <span className="text-xs bg-amber-200 text-amber-800 px-1.5 py-0.5 rounded-full flex-shrink-0">לא בתוכנית</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-500 truncate mt-0.5">{act.description_he?.slice(0, 55)}...</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-amber-700 font-medium">📍 {Math.round(act.dist)} ק"מ מכאן</span>
+                        {act.google_rating && <span className="text-xs text-slate-400">⭐ {act.google_rating}</span>}
+                        {act.price_level === 'free' && <span className="text-xs text-forest-600">חינם</span>}
+                        {act.is_rainy_day_alt && <span className="text-xs text-blue-500">🌧️ ליום גשום</span>}
+                      </div>
+                    </div>
+                    <button onClick={() => { addActivity(act.id, true); }}
+                      className="flex-shrink-0 bg-amber-500 text-white rounded-xl px-3 py-2 text-xs font-medium flex items-center gap-1">
+                      <Plus size={12} /> הוסף
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Day nav */}
           <div className="flex gap-3 mt-4 pb-2">
             {localDays.findIndex((d) => d.id === activeDayId) > 0 && (
@@ -325,8 +388,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
                 const idx = localDays.findIndex((d) => d.id === activeDayId)
                 setActiveDayId(localDays[idx - 1].id)
                 setEditMode(false)
-              }}
-                className="flex-1 py-2.5 rounded-xl border border-sand-200 text-sm text-slate-500 bg-white">
+              }} className="flex-1 py-2.5 rounded-xl border border-sand-200 text-sm text-slate-500 bg-white">
                 ← יום קודם
               </button>
             )}
@@ -335,8 +397,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
                 const idx = localDays.findIndex((d) => d.id === activeDayId)
                 setActiveDayId(localDays[idx + 1].id)
                 setEditMode(false)
-              }}
-                className="flex-1 py-2.5 rounded-xl bg-forest-600 text-sm text-white">
+              }} className="flex-1 py-2.5 rounded-xl bg-forest-600 text-sm text-white">
                 יום הבא →
               </button>
             )}
