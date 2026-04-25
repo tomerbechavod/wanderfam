@@ -10,7 +10,6 @@ interface Props {
 }
 
 export default async function ItineraryPage({ params, searchParams }: Props) {
-  // In production: fetch from Supabase. Use seed for now.
   if (params.slug !== SEED_TRIP.slug) notFound()
 
   const days = SEED_DAYS.map((day) => ({
@@ -18,7 +17,7 @@ export default async function ItineraryPage({ params, searchParams }: Props) {
     slots: day.slots.map((slot) => ({
       ...slot,
       activity: slot.activity_id
-        ? SEED_ACTIVITIES.find((a) => a.id === slot.activity_id) ?? null
+        ? (SEED_ACTIVITIES.find((a) => a.id === slot.activity_id) ?? null)
         : null,
     })),
   }))
@@ -27,12 +26,13 @@ export default async function ItineraryPage({ params, searchParams }: Props) {
 
   return (
     <div className="min-h-screen bg-sand-50">
-      <TopBar
-        tripSlug={params.slug}
-        subtitle="Full itinerary"
-      />
+      <TopBar tripSlug={params.slug} subtitle="Full itinerary" />
       <main className="max-w-lg mx-auto pb-24">
-        <ItineraryClient days={days} tripSlug={params.slug} initialDayId={initialDayId} />
+        <ItineraryClient
+          days={days as any}
+          tripSlug={params.slug}
+          initialDayId={initialDayId}
+        />
       </main>
       <BottomNav tripSlug={params.slug} />
     </div>
