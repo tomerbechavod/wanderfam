@@ -1,17 +1,22 @@
 import { notFound } from 'next/navigation'
-import { SEED_TRIP, SEED_ACTIVITIES } from '@/lib/seed-data'
+import { SEED_ACTIVITIES, OPTIONAL_ACTIVITIES, EXTRA_ACTIVITIES } from '@/lib/seed-data'
+import ActivityDetailClient from '@/components/activity/ActivityDetailClient'
 import TopBar from '@/components/layout/TopBar'
 import BottomNav from '@/components/layout/BottomNav'
-import ActivityDetailClient from '@/components/activity/ActivityDetailClient'
 
-interface Props {
-  params: { slug: string; activityId: string }
-}
+export default function ActivityPage({
+  params,
+}: {
+  params: { slug: string; id: string }
+}) {
+  const allActivities = [
+    ...SEED_ACTIVITIES,
+    ...(OPTIONAL_ACTIVITIES || []),
+    ...(EXTRA_ACTIVITIES || []),
+  ]
 
-export default async function ActivityPage({ params }: Props) {
-  if (params.slug !== SEED_TRIP.slug) notFound()
+  const activity = allActivities.find((a) => a.id === params.id)
 
-  const activity = SEED_ACTIVITIES.find((a) => a.id === params.activityId)
   if (!activity) notFound()
 
   return (
@@ -20,12 +25,16 @@ export default async function ActivityPage({ params }: Props) {
         tripSlug={params.slug}
         showBack
         backHref={`/trip/${params.slug}/explore`}
-        rightElement={<span className="text-2xl">{activity.emoji}</span>}
+        title={activity.title_he || activity.title}
       />
-      <main className="max-w-lg mx-auto pb-24">
-        <ActivityDetailClient activity={activity} tripSlug={params.slug} />
+      <main className="pb-24">
+        <ActivityDetailClient
+          activity={activity}
+          tripSlug={params.slug}
+          lang="he"
+        />
       </main>
-      <BottomNav tripSlug={params.slug} />
+      <BottomNav tripSlug={params.slug} active="explore" />
     </div>
   )
 }
