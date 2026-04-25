@@ -302,3 +302,4 @@ The app falls back to seed data automatically. Check your `.env.local` keys.
 **iOS Safari: app doesn't go full-screen**
 Make sure you used Safari (not Chrome) on iOS to add to home screen. Only Safari triggers full-screen PWA mode on iOS.
  
+ 
