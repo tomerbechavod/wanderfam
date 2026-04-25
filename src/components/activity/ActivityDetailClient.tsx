@@ -29,7 +29,7 @@ export default function ActivityDetailClient({ activity: a, tripSlug, lang = 'he
   const hasImages = a.images && a.images.length > 0
 
   return (
-    <div>
+    <div className="max-w-lg mx-auto">
       {/* Image gallery */}
       <div className="relative h-56 bg-gradient-to-br from-forest-100 via-forest-200 to-forest-300 overflow-hidden">
         {hasImages ? (
