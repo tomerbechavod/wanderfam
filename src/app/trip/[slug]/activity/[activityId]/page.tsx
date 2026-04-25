@@ -4,16 +4,13 @@ import ActivityDetailClient from '@/components/activity/ActivityDetailClient'
 import TopBar from '@/components/layout/TopBar'
 import BottomNav from '@/components/layout/BottomNav'
 
-function findActivity(id: string) {
+function findActivity(actId: string) {
   const all = [
     ...SEED_ACTIVITIES,
     ...(OPTIONAL_ACTIVITIES || []),
     ...(EXTRA_ACTIVITIES || []),
   ]
-  for (const act of all) {
-    if (act.id === id) return act
-  }
-  return null
+  return all.find(function(act) { return act.id === actId }) || null
 }
 
 export default function ActivityPage({
