@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { format, parseISO, isToday } from 'date-fns'
-import { MapPin, CloudRain, Edit3, X, Plus, Trash2, GripVertical, Check } from 'lucide-react'
+import { MapPin, CloudRain, Edit3, X, Plus, Trash2, Check, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn, getMockWeather } from '@/lib/utils'
 import TimelineSlot from '@/components/trip/TimelineSlot'
-import { SEED_ACTIVITIES } from '@/lib/seed-data'
+import { SEED_ACTIVITIES, OPTIONAL_ACTIVITIES } from '@/lib/seed-data'
 import type { ItineraryDay, ItinerarySlot } from '@/types'
 
 interface Props {
@@ -25,7 +25,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
   const [editMode, setEditMode] = useState(false)
   const [localDays, setLocalDays] = useState(days)
   const [showAddPanel, setShowAddPanel] = useState(false)
-  const [dragIdx, setDragIdx] = useState<number | null>(null)
+  const [showOptional, setShowOptional] = useState(false)
   const [saved, setSaved] = useState(false)
   const chipRef = useRef<HTMLDivElement>(null)
 
@@ -42,7 +42,6 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
     if (todayDay) setActiveDayId(todayDay.id)
   }, [days])
 
-  // Load saved edits from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(`wanderfam-days-${activeDayId}`)
     if (stored) {
@@ -53,9 +52,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
 
   const saveEdits = () => {
     const day = localDays.find(d => d.id === activeDayId)
-    if (day) {
-      localStorage.setItem(`wanderfam-days-${activeDayId}`, JSON.stringify(day.slots))
-    }
+    if (day) localStorage.setItem(`wanderfam-days-${activeDayId}`, JSON.stringify(day.slots))
     setEditMode(false)
     setShowAddPanel(false)
     setSaved(true)
@@ -63,11 +60,9 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
   }
 
   const cancelEdits = () => {
-    // Restore from original days
     const stored = localStorage.getItem(`wanderfam-days-${activeDayId}`)
     if (stored) {
-      const parsed = JSON.parse(stored)
-      setLocalDays(prev => prev.map(d => d.id === activeDayId ? { ...d, slots: parsed } : d))
+      setLocalDays(prev => prev.map(d => d.id === activeDayId ? { ...d, slots: JSON.parse(stored) } : d))
     } else {
       setLocalDays(days)
     }
@@ -77,14 +72,13 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
 
   const removeSlot = (slotId: string) => {
     setLocalDays(prev => prev.map(d =>
-      d.id === activeDayId
-        ? { ...d, slots: d.slots.filter(s => s.id !== slotId) }
-        : d
+      d.id === activeDayId ? { ...d, slots: d.slots.filter(s => s.id !== slotId) } : d
     ))
   }
 
-  const addActivity = (activityId: string) => {
-    const act = SEED_ACTIVITIES.find(a => a.id === activityId)
+  const addActivity = (activityId: string, fromOptional = false) => {
+    const allActivities = [...SEED_ACTIVITIES, ...(OPTIONAL_ACTIVITIES || [])]
+    const act = allActivities.find(a => a.id === activityId)
     if (!act || !activeDay) return
     const newSlot: ItinerarySlot = {
       id: `slot-${Date.now()}`,
@@ -94,18 +88,17 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
       sort_order: activeDay.slots.length + 1,
       start_time: null,
       end_time: null,
-      custom_note: null,
+      custom_note: fromOptional ? `💡 נוסף מרשימת האופציות` : null,
       status: 'planned',
       travel_time_from_prev_minutes: null,
       is_meal: false,
       meal_suggestion: null,
     }
     setLocalDays(prev => prev.map(d =>
-      d.id === activeDayId
-        ? { ...d, slots: [...d.slots, newSlot] }
-        : d
+      d.id === activeDayId ? { ...d, slots: [...d.slots, newSlot] } : d
     ))
     setShowAddPanel(false)
+    setShowOptional(false)
   }
 
   const moveSlot = (idx: number, dir: 'up' | 'down') => {
@@ -114,15 +107,12 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
     const newIdx = dir === 'up' ? idx - 1 : idx + 1
     if (newIdx < 0 || newIdx >= slots.length) return
     ;[slots[idx], slots[newIdx]] = [slots[newIdx], slots[idx]]
-    setLocalDays(prev => prev.map(d =>
-      d.id === activeDayId ? { ...d, slots } : d
-    ))
+    setLocalDays(prev => prev.map(d => d.id === activeDayId ? { ...d, slots } : d))
   }
 
-  // Activities not already in this day
-  const availableActivities = SEED_ACTIVITIES.filter(
-    act => !activeDay?.slots.some(s => s.activity_id === act.id)
-  )
+  const inDayIds = new Set(activeDay?.slots.map(s => s.activity_id).filter(Boolean))
+  const availableMain = SEED_ACTIVITIES.filter(a => !inDayIds.has(a.id))
+  const availableOptional = (OPTIONAL_ACTIVITIES || []).filter(a => !inDayIds.has(a.id))
 
   return (
     <div>
@@ -136,7 +126,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
             <button key={day.id} data-active={active}
               onClick={() => { setActiveDayId(day.id); setEditMode(false); setShowAddPanel(false) }}
               className={cn(
-                'flex-shrink-0 flex flex-col items-center px-3 py-2 rounded-2xl border text-xs transition-all tap-target',
+                'flex-shrink-0 flex flex-col items-center px-3 py-2 rounded-2xl border text-xs transition-all',
                 active ? 'bg-forest-600 text-white border-forest-600'
                   : today ? 'bg-forest-50 text-forest-700 border-forest-300'
                   : 'bg-white text-slate-500 border-sand-200'
@@ -158,9 +148,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
               <div className="flex items-center gap-1.5 mt-1 text-xs text-slate-400">
                 <MapPin size={11} /><span>{activeDay.base_location}</span>
               </div>
-              {activeDay.theme && (
-                <p className="text-xs text-slate-500 italic mt-1">"{activeDay.theme}"</p>
-              )}
+              {activeDay.theme && <p className="text-xs text-slate-500 italic mt-1">"{activeDay.theme}"</p>}
             </div>
             <div className="flex flex-col items-end gap-1.5">
               <span className={cn('badge text-xs', PHASE_COLORS[activeDay.phase])}>
@@ -188,45 +176,95 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
               </button>
             </div>
           ) : (
-            <div className="flex gap-2 mb-3">
+            <div className="flex gap-2 mb-3 flex-wrap">
               <button onClick={saveEdits}
                 className="flex items-center gap-1.5 text-sm bg-forest-600 text-white px-3 py-1.5 rounded-xl">
-                <Check size={14} /> שמור שינויים
+                <Check size={14} /> שמור
               </button>
               <button onClick={() => setShowAddPanel(!showAddPanel)}
                 className="flex items-center gap-1.5 text-sm bg-blue-500 text-white px-3 py-1.5 rounded-xl">
                 <Plus size={14} /> הוסף פעילות
               </button>
               <button onClick={cancelEdits}
-                className="flex items-center gap-1.5 text-sm bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl mr-auto">
+                className="flex items-center gap-1.5 text-sm bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl">
                 <X size={14} /> ביטול
               </button>
             </div>
           )}
 
-          {/* Add activity panel */}
+          {/* Add panel */}
           {showAddPanel && (
-            <div className="mb-4 bg-white border border-sand-200 rounded-2xl overflow-hidden">
-              <div className="px-4 py-3 border-b border-sand-100 flex items-center justify-between">
-                <p className="font-medium text-sm text-slate-800">בחר פעילות להוספה</p>
+            <div className="mb-4 bg-white border border-sand-200 rounded-2xl overflow-hidden shadow-sm">
+              <div className="px-4 py-3 border-b border-sand-100 flex items-center justify-between bg-sand-50">
+                <p className="font-semibold text-sm text-slate-800">➕ הוסף פעילות ליום זה</p>
                 <button onClick={() => setShowAddPanel(false)}>
                   <X size={16} className="text-slate-400" />
                 </button>
               </div>
-              <div className="divide-y divide-sand-100 max-h-72 overflow-y-auto">
-                {availableActivities.length === 0 ? (
-                  <p className="text-sm text-slate-400 text-center py-6">כל הפעילויות כבר בטיימליין</p>
-                ) : availableActivities.map(act => (
-                  <button key={act.id} onClick={() => addActivity(act.id)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-sand-50 text-right">
-                    <span className="text-xl flex-shrink-0">{act.emoji}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-900 truncate">{act.title_he || act.title}</p>
-                      <p className="text-xs text-slate-400">{act.location_name} · {act.google_rating && `⭐ ${act.google_rating}`}</p>
-                    </div>
-                    <Plus size={16} className="text-forest-500 flex-shrink-0" />
-                  </button>
-                ))}
+
+              {/* Main activities */}
+              <div>
+                <p className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wide bg-white border-b border-sand-100">
+                  📋 פעילויות בתוכנית
+                </p>
+                <div className="divide-y divide-sand-100 max-h-52 overflow-y-auto">
+                  {availableMain.length === 0 ? (
+                    <p className="text-sm text-slate-400 text-center py-4">כל פעילויות התוכנית כבר ביום זה ✅</p>
+                  ) : availableMain.map(act => (
+                    <button key={act.id} onClick={() => addActivity(act.id, false)}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-sand-50 text-right">
+                      <span className="text-xl flex-shrink-0">{act.emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900 truncate">{act.title_he || act.title}</p>
+                        <p className="text-xs text-slate-400">{act.location_name} · {act.duration_minutes} דק׳{act.google_rating ? ` · ⭐ ${act.google_rating}` : ''}</p>
+                      </div>
+                      <Plus size={16} className="text-forest-500 flex-shrink-0" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Optional activities */}
+              <div className="border-t border-sand-200">
+                <button
+                  onClick={() => setShowOptional(!showOptional)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-amber-50 hover:bg-amber-100 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">💡</span>
+                    <p className="text-sm font-semibold text-amber-800">פעילויות אופציונליות</p>
+                    <span className="text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full">
+                      {availableOptional.length} לא בתוכנית
+                    </span>
+                  </div>
+                  {showOptional ? <ChevronUp size={16} className="text-amber-600" /> : <ChevronDown size={16} className="text-amber-600" />}
+                </button>
+
+                {showOptional && (
+                  <div className="divide-y divide-sand-100 max-h-64 overflow-y-auto">
+                    {availableOptional.length === 0 ? (
+                      <p className="text-sm text-slate-400 text-center py-4">אין פעילויות אופציונליות זמינות</p>
+                    ) : availableOptional.map(act => (
+                      <button key={act.id} onClick={() => addActivity(act.id, true)}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-amber-50 text-right">
+                        <span className="text-xl flex-shrink-0">{act.emoji}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            <p className="text-sm font-medium text-slate-900 truncate">{act.title_he || act.title}</p>
+                            <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full flex-shrink-0">אופציה</span>
+                          </div>
+                          <p className="text-xs text-slate-400 truncate">{act.description_he?.slice(0, 60)}...</p>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            {act.location_name} · {act.duration_minutes} דק׳
+                            {act.google_rating ? ` · ⭐ ${act.google_rating}` : ''}
+                            {act.price_level === 'free' ? ' · חינם' : ''}
+                            {act.is_rainy_day_alt ? ' · 🌧️ ליום גשום' : ''}
+                          </p>
+                        </div>
+                        <Plus size={16} className="text-amber-500 flex-shrink-0" />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -244,7 +282,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
             {activeDay.slots.map((slot, i) => (
               <div key={slot.id} className="relative">
                 {editMode && (
-                  <div className="flex items-center gap-1 mb-1 pr-8">
+                  <div className="flex items-center gap-1 mb-1">
                     <button onClick={() => moveSlot(i, 'up')} disabled={i === 0}
                       className="text-xs px-2 py-1 rounded-lg bg-sand-100 text-slate-500 disabled:opacity-30">↑</button>
                     <button onClick={() => moveSlot(i, 'down')} disabled={i === activeDay.slots.length - 1}
@@ -259,7 +297,6 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
                   </div>
                 )}
                 <TimelineSlot
-                  key={slot.id}
                   slot={slot}
                   tripSlug={tripSlug}
                   isLast={i === activeDay.slots.length - 1}
