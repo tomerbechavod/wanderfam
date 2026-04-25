@@ -85,7 +85,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
                 <span>{activeDay.base_location}</span>
               </div>
               {activeDay.theme && (
-                <p className="text-xs text-slate-500 italic mt-1">"{activeDay.theme}"</p>
+                <p className="text-xs text-slate-500 italic mt-1">&apos;{activeDay.theme}&apos;</p>
               )}
             </div>
             <div className="flex flex-col items-end gap-1.5">
@@ -157,3 +157,4 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
     </div>
   )
 }
+
