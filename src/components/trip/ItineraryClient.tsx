@@ -127,16 +127,19 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
   const availableMain = SEED_ACTIVITIES.filter(function(a) { return !inDayIds.has(a.id) })
   const availableOptional = [...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || [])].filter(function(a) { return !inAnyDayIds.has(a.id) })
 
-  // Nearby: רק עד 20 ק"מ, לא ביום הזה ולא בשום יום אחר
+// Nearby: לפי אזור גיאוגרפי — אטרקציות באותו phase שלא בתוכנית
   const nearbySuggestions = activeDay
     ? allActivities
-        .filter(function(a) { return !inDayIds.has(a.id) })
+        .filter(function(a) {
+          return !inDayIds.has(a.id) &&
+                 !inAnyDayIds.has(a.id) &&
+                 a.phase === activeDay.phase
+        })
         .map(function(a) {
           return Object.assign({}, a, {
             dist: distanceKm(activeDay.base_lat, activeDay.base_lng, a.lat, a.lng)
           })
         })
-        .filter(function(a) { return a.dist <= 20 })
         .sort(function(a, b) { return a.dist - b.dist })
         .slice(0, 3)
     : []
