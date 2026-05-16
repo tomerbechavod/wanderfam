@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { SEED_TRIP, SEED_DAYS, SEED_ACTIVITIES } from '@/lib/seed-data'
+import { SEED_TRIP, SEED_DAYS, SEED_ACTIVITIES, OPTIONAL_ACTIVITIES, EXTRA_ACTIVITIES, FUN_ACTIVITIES } from '@/lib/seed-data'
 import TopBar from '@/components/layout/TopBar'
 import BottomNav from '@/components/layout/BottomNav'
 import TripDashboardClient from '@/components/trip/TripDashboardClient'
@@ -40,7 +40,7 @@ async function getTripData(slug: string): Promise<TripWithDays | null> {
       slots: day.slots.map((slot) => ({
         ...slot,
         activity: slot.activity_id
-          ? SEED_ACTIVITIES.find((a) => a.id === slot.activity_id) ?? null
+          ? [...SEED_ACTIVITIES, ...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || []), ...(FUN_ACTIVITIES || [])].find((a) => a.id === slot.activity_id) ?? null
           : null,
       })),
     }))
@@ -54,7 +54,12 @@ export default async function TripPage({ params }: Props) {
   const trip = await getTripData(params.slug)
   if (!trip) notFound()
 
-  const allActivities = SEED_ACTIVITIES
+  const allActivities = [
+    ...SEED_ACTIVITIES,
+    ...(OPTIONAL_ACTIVITIES || []),
+    ...(EXTRA_ACTIVITIES || []),
+    ...(FUN_ACTIVITIES || []),
+  ]
 
   return (
     <div className="min-h-screen bg-sand-50">
