@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   MapPin, Clock, Star, Globe, ExternalLink, Navigation,
   Heart, Users, AlertCircle, Tag, ChevronDown, ChevronUp,
@@ -18,46 +18,67 @@ interface Props {
   lang?: 'he' | 'en'
 }
 
+function useWikipediaImage(title: string, existingImages: string[]) {
+  const [wikiImg, setWikiImg] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (existingImages && existingImages.length > 0) return
+    const searchTitle = title.replace(/ /g, '_')
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchTitle)}`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.thumbnail?.source) {
+          setWikiImg(d.thumbnail.source.replace(/\/\d+px-/, '/800px-'))
+        }
+      })
+      .catch(() => {})
+  }, [title, existingImages])
+
+  return wikiImg
+}
+
 export default function ActivityDetailClient({ activity: a, tripSlug, lang = 'he' }: Props) {
   const { toggleFavorite, isFavorite } = useTripStore()
   const fav = isFavorite(a.id)
   const [showNearby, setShowNearby] = useState(false)
   const [imgIndex, setImgIndex] = useState(0)
 
+  const wikiImg = useWikipediaImage(a.title, a.images || [])
+  const allImages = (a.images && a.images.length > 0) ? a.images : (wikiImg ? [wikiImg] : [])
+
   const title = lang === 'he' && a.title_he ? a.title_he : a.title
   const description = lang === 'he' && a.description_he ? a.description_he : a.description
-  const hasImages = a.images && a.images.length > 0
 
   return (
-    <div className="max-w-lg mx-auto">
+    <div className="max-w-lg mx-auto" dir="rtl">
       {/* Image gallery */}
       <div className="relative h-56 bg-gradient-to-br from-forest-100 via-forest-200 to-forest-300 overflow-hidden">
-        {hasImages ? (
+        {allImages.length > 0 ? (
           <>
             <img
-              src={a.images[imgIndex]}
+              src={allImages[imgIndex]}
               alt={title}
               className="w-full h-full object-cover"
               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
             />
-            {a.images.length > 1 && (
+            {allImages.length > 1 && (
               <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
-                {a.images.map((_, i) => (
+                {allImages.map((_, i) => (
                   <button key={i} onClick={() => setImgIndex(i)}
                     className={cn('w-2 h-2 rounded-full transition-all', i === imgIndex ? 'bg-white' : 'bg-white/50')}
                   />
                 ))}
               </div>
             )}
-            {a.images.length > 1 && (
+            {allImages.length > 1 && (
               <>
-                <button onClick={() => setImgIndex((i) => (i - 1 + a.images.length) % a.images.length)}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 text-white w-8 h-8 rounded-full flex items-center justify-center">
-                  ‹
-                </button>
-                <button onClick={() => setImgIndex((i) => (i + 1) % a.images.length)}
+                <button onClick={() => setImgIndex((i) => (i - 1 + allImages.length) % allImages.length)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 text-white w-8 h-8 rounded-full flex items-center justify-center">
                   ›
+                </button>
+                <button onClick={() => setImgIndex((i) => (i + 1) % allImages.length)}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 text-white w-8 h-8 rounded-full flex items-center justify-center">
+                  ‹
                 </button>
               </>
             )}
@@ -66,35 +87,40 @@ export default function ActivityDetailClient({ activity: a, tripSlug, lang = 'he
           <div className="w-full h-full flex items-center justify-center text-8xl">{a.emoji}</div>
         )}
         <button onClick={() => toggleFavorite(a.id)}
-          className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md">
+          className="absolute top-4 left-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md">
           <Heart size={18} className={fav ? 'fill-terracotta-500 text-terracotta-500' : 'text-slate-400'} />
         </button>
         {a.is_rainy_day_alt && (
-          <div className="absolute bottom-3 left-3 bg-blue-500/90 text-white text-xs px-3 py-1 rounded-full font-medium">
+          <div className="absolute bottom-3 right-3 bg-blue-500/90 text-white text-xs px-3 py-1 rounded-full font-medium">
             🌧️ {lang === 'he' ? 'נהדר ליום גשום' : 'Great rainy day option'}
+          </div>
+        )}
+        {wikiImg && (!a.images || a.images.length === 0) && (
+          <div className="absolute top-4 right-4 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
+            📷 Wikipedia
           </div>
         )}
       </div>
 
       <div className="px-4 pt-4">
-        <h1 className="font-serif text-2xl font-semibold text-slate-900 leading-tight mb-1">{title}</h1>
-        <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-3">
-          <MapPin size={13} className="text-forest-500" />
-          <span>{a.location_name}</span>
-          <span className="text-slate-300">·</span>
+        <h1 className="font-serif text-2xl font-semibold text-slate-900 leading-tight mb-1 text-right">{title}</h1>
+        <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-3 justify-end">
           <span>{a.region}, {a.country}</span>
+          <span className="text-slate-300">·</span>
+          <span>{a.location_name}</span>
+          <MapPin size={13} className="text-forest-500" />
         </div>
 
         {a.google_rating && (
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-4 justify-end">
+            <span className="text-xs text-slate-400">({a.google_review_count?.toLocaleString()})</span>
+            <span className="text-sm font-semibold text-slate-700">{a.google_rating}</span>
             <div className="flex">
               {[1, 2, 3, 4, 5].map((s) => (
                 <Star key={s} size={14}
                   className={s <= Math.round(a.google_rating!) ? 'fill-amber-400 text-amber-400' : 'text-slate-200 fill-slate-200'} />
               ))}
             </div>
-            <span className="text-sm font-semibold text-slate-700">{a.google_rating}</span>
-            <span className="text-xs text-slate-400">({a.google_review_count?.toLocaleString()})</span>
           </div>
         )}
 
@@ -111,30 +137,29 @@ export default function ActivityDetailClient({ activity: a, tripSlug, lang = 'he
         </div>
 
         {a.price_estimate && (
-          <div className="bg-sand-50 border border-sand-200 rounded-xl p-3 mb-4">
+          <div className="bg-sand-50 border border-sand-200 rounded-xl p-3 mb-4 text-right">
             <p className="text-xs text-sand-600 font-medium mb-0.5">{lang === 'he' ? 'עלות משוערת' : 'Estimated cost'}</p>
             <p className="text-sm text-slate-700">{a.price_estimate}</p>
           </div>
         )}
 
-        {/* Distance from hotel */}
-        <div className="bg-forest-50 border border-forest-200 rounded-xl p-3 mb-4 flex items-center gap-2">
+        <div className="bg-forest-50 border border-forest-200 rounded-xl p-3 mb-4 flex items-center gap-2 flex-row-reverse">
           <span>🏨</span>
-          <div>
+          <div className="text-right">
             <p className="text-xs text-forest-600 font-medium">{lang === 'he' ? 'מרחק מהמלון' : 'Distance from hotel'}</p>
             <p className="text-sm text-forest-800">
               {a.phase === 'munich'
-                ? `~${Math.round(Math.sqrt(Math.pow(a.lat - 48.1275, 2) + Math.pow(a.lng - 11.5979, 2)) * 111)} ק"מ מ-Motel One מינכן`
-                : `~${Math.round(Math.sqrt(Math.pow(a.lat - 47.3419, 2) + Math.pow(a.lng - 13.3891, 2)) * 111)} ק"מ מ-Sonnberg Ferienanlage`
+                ? `~${Math.round(Math.sqrt(Math.pow(a.lat - 48.1275, 2) + Math.pow(a.lng - 11.5979, 2)) * 111)} ק"מ מהמלון במינכן`
+                : `~${Math.round(Math.sqrt(Math.pow(a.lat - 47.3419, 2) + Math.pow(a.lng - 13.3891, 2)) * 111)} ק"מ מ-Sonnberg`
               }
             </p>
           </div>
         </div>
 
-        <h2 className="font-serif text-lg font-semibold text-slate-800 mb-2">{lang === 'he' ? 'על המקום' : 'About'}</h2>
-        <p className="text-sm text-slate-600 leading-relaxed mb-4">{description}</p>
+        <h2 className="font-serif text-lg font-semibold text-slate-800 mb-2 text-right">{lang === 'he' ? 'על המקום' : 'About'}</h2>
+        <p className="text-sm text-slate-600 leading-relaxed mb-4 text-right">{description}</p>
 
-        <div className="flex flex-wrap gap-1.5 mb-4">
+        <div className="flex flex-wrap gap-1.5 mb-4 justify-end">
           {a.tags.map((tag) => (
             <span key={tag} className="flex items-center gap-1 text-xs px-2.5 py-1 bg-forest-50 text-forest-700 rounded-full border border-forest-200">
               <Tag size={9} />{tag}
@@ -143,8 +168,8 @@ export default function ActivityDetailClient({ activity: a, tripSlug, lang = 'he
         </div>
 
         {a.tips && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 mb-4">
-            <div className="flex items-center gap-1.5 mb-1.5">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 mb-4 text-right">
+            <div className="flex items-center gap-1.5 mb-1.5 flex-row-reverse">
               <AlertCircle size={14} className="text-amber-600" />
               <p className="text-xs font-semibold text-amber-700">{lang === 'he' ? 'טיפ חשוב' : 'Pro tip'}</p>
             </div>
@@ -153,8 +178,8 @@ export default function ActivityDetailClient({ activity: a, tripSlug, lang = 'he
         )}
 
         {a.family_notes && (
-          <div className="bg-forest-50 border border-forest-200 rounded-xl p-3.5 mb-4">
-            <div className="flex items-center gap-1.5 mb-1.5">
+          <div className="bg-forest-50 border border-forest-200 rounded-xl p-3.5 mb-4 text-right">
+            <div className="flex items-center gap-1.5 mb-1.5 flex-row-reverse">
               <Users size={14} className="text-forest-600" />
               <p className="text-xs font-semibold text-forest-700">{lang === 'he' ? 'הערות למשפחה' : 'Family notes'}</p>
             </div>
@@ -172,18 +197,18 @@ export default function ActivityDetailClient({ activity: a, tripSlug, lang = 'he
             {showNearby && (
               <div className="space-y-2 mt-1">
                 {a.nearby_restaurants.map((r, i) => (
-                  <div key={i} className="flex items-center gap-2.5 py-2 border-b border-sand-100">
+                  <div key={i} className="flex items-center gap-2.5 py-2 border-b border-sand-100 flex-row-reverse">
                     <span>🍽️</span>
-                    <div className="flex-1">
+                    <div className="flex-1 text-right">
                       <p className="text-sm font-medium text-slate-800">{r.name}</p>
                       <p className="text-xs text-slate-400">{r.type} · {r.distance_km}km</p>
                     </div>
                   </div>
                 ))}
                 {a.nearby_attractions.map((r, i) => (
-                  <div key={i} className="flex items-center gap-2.5 py-2 border-b border-sand-100">
+                  <div key={i} className="flex items-center gap-2.5 py-2 border-b border-sand-100 flex-row-reverse">
                     <span>📍</span>
-                    <div className="flex-1">
+                    <div className="flex-1 text-right">
                       <p className="text-sm font-medium text-slate-800">{r.name}</p>
                       <p className="text-xs text-slate-400">{r.type} · {r.distance_km}km</p>
                     </div>
@@ -244,8 +269,8 @@ export default function ActivityDetailClient({ activity: a, tripSlug, lang = 'he
 
 function InfoCell({ icon, label, value }: { icon: React.ReactNode; label: string; value: React.ReactNode }) {
   return (
-    <div className="bg-white border border-sand-200 rounded-xl p-3">
-      <div className="flex items-center gap-1 text-xs text-slate-400 mb-1">
+    <div className="bg-white border border-sand-200 rounded-xl p-3 text-right">
+      <div className="flex items-center gap-1 text-xs text-slate-400 mb-1 flex-row-reverse">
         <span>{icon}</span>{label}
       </div>
       <div className="text-sm font-medium text-slate-800">{value}</div>
