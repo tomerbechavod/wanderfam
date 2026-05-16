@@ -5,7 +5,7 @@ import { format, parseISO, isToday } from 'date-fns'
 import { MapPin, CloudRain, Edit3, X, Plus, Trash2, Check, ChevronDown, ChevronUp, Navigation } from 'lucide-react'
 import { cn, getMockWeather } from '@/lib/utils'
 import TimelineSlot from '@/components/trip/TimelineSlot'
-import { SEED_ACTIVITIES, OPTIONAL_ACTIVITIES, EXTRA_ACTIVITIES } from '@/lib/seed-data'
+import { SEED_ACTIVITIES, OPTIONAL_ACTIVITIES, EXTRA_ACTIVITIES, FUN_ACTIVITIES } from '@/lib/seed-data'
 import type { ItineraryDay, ItinerarySlot } from '@/types'
 
 interface Props {
@@ -85,7 +85,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
   }
 
   const addActivity = (activityId: string, fromOptional = false) => {
-    const allActivities = [...SEED_ACTIVITIES, ...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || [])]
+    const allActivities = [...SEED_ACTIVITIES, ...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || []), ...(FUN_ACTIVITIES || [])]
     const act = allActivities.find(function(a) { return a.id === activityId })
     if (!act || !activeDay) return
     const newSlot: ItinerarySlot = {
