@@ -86,7 +86,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
 
   const addActivity = (activityId: string, fromOptional = false) => {
     const allActivities = [...SEED_ACTIVITIES, ...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || [])]
-    const act = allActivities.find(a => a.id === activityId)
+    const act = allActivities.find(function(a) { return a.id === activityId })
     if (!act || !activeDay) return
     const newSlot: ItinerarySlot = {
       id: `slot-${Date.now()}`,
@@ -96,7 +96,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
       sort_order: activeDay.slots.length + 1,
       start_time: null,
       end_time: null,
-      custom_note: fromOptional ? `💡 נוסף מרשימת האופציות` : null,
+      custom_note: fromOptional ? '💡 נוסף מרשימת האופציות' : null,
       status: 'planned',
       travel_time_from_prev_minutes: null,
       is_meal: false,
@@ -118,37 +118,34 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
     setLocalDays(prev => prev.map(d => d.id === activeDayId ? { ...d, slots } : d))
   }
 
-  // All activities combined
   const allActivities = [...SEED_ACTIVITIES, ...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || [])]
   const inDayIds = new Set(activeDay?.slots.map(s => s.activity_id).filter(Boolean))
-
-  // Activities already in THIS day's plan (from all days)
   const inAnyDayIds = new Set(
     localDays.flatMap(d => d.slots.map(s => s.activity_id).filter(Boolean))
   )
 
-  // For add panel
-  const availableMain = SEED_ACTIVITIES.filter(a => !inDayIds.has(a.id))
-  const availableOptional = [...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || [])].filter(a => !inDayIds.has(a.id))
+  const availableMain = SEED_ACTIVITIES.filter(function(a) { return !inDayIds.has(a.id) })
+  const availableOptional = [...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || [])].filter(function(a) { return !inDayIds.has(a.id) })
 
-  // Nearby suggestions — closest 3 activities not in this day, matching phase
+  // Nearby: רק עד 20 ק"מ, לא ביום הזה ולא בשום יום אחר
   const nearbySuggestions = activeDay
     ? allActivities
-        .filter(a => !inDayIds.has(a.id) && (a.phase === activeDay.phase || activeDay.phase === 'transit'))
-        .map(a => ({
-          ...a,
-          dist: distanceKm(activeDay.base_lat, activeDay.base_lng, a.lat, a.lng)
-        }))
-        .sort((a, b) => a.dist - b.dist)
+        .filter(function(a) { return !inDayIds.has(a.id) && !inAnyDayIds.has(a.id) })
+        .map(function(a) {
+          return Object.assign({}, a, {
+            dist: distanceKm(activeDay.base_lat, activeDay.base_lng, a.lat, a.lng)
+          })
+        })
+        .filter(function(a) { return a.dist <= 20 })
+        .sort(function(a, b) { return a.dist - b.dist })
         .slice(0, 3)
     : []
 
-  // Summary: which SEED_ACTIVITIES are in plan vs not
   const inPlanIds = new Set(
     localDays.flatMap(d => d.slots.map(s => s.activity_id).filter(Boolean))
   )
-  const inPlanActivities = SEED_ACTIVITIES.filter(a => inPlanIds.has(a.id))
-  const notInPlanActivities = SEED_ACTIVITIES.filter(a => !inPlanIds.has(a.id))
+  const inPlanActivities = SEED_ACTIVITIES.filter(function(a) { return inPlanIds.has(a.id) })
+  const notInPlanActivities = SEED_ACTIVITIES.filter(function(a) { return !inPlanIds.has(a.id) })
 
   return (
     <div>
@@ -295,7 +292,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
             </div>
           )}
 
-          {/* Plan status summary */}
+          {/* Plan status */}
           <div className="flex gap-2 mb-3 flex-wrap">
             <div className="flex items-center gap-1.5 bg-forest-50 border border-forest-200 rounded-xl px-3 py-1.5">
               <Check size={12} className="text-forest-600" />
@@ -343,13 +340,13 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
             )}
           </div>
 
-          {/* Nearby suggestions */}
+          {/* Nearby suggestions — עד 20 ק"מ בלבד */}
           {nearbySuggestions.length > 0 && (
             <div className="mt-5 mb-2">
               <div className="flex items-center gap-2 mb-3">
                 <Navigation size={14} className="text-amber-500" />
                 <h3 className="text-sm font-semibold text-slate-700">קרוב אליך היום</h3>
-                <span className="text-xs text-slate-400">— עוד לא בתוכנית</span>
+                <span className="text-xs text-slate-400">— עד 20 ק"מ, עוד לא בתוכנית</span>
               </div>
               <div className="space-y-2">
                 {nearbySuggestions.map((act: any) => (
@@ -357,12 +354,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
                     className="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex items-center gap-3">
                     <span className="text-2xl flex-shrink-0">{act.emoji}</span>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-sm font-semibold text-slate-900 truncate">{act.title_he || act.title}</p>
-                        {!inPlanIds.has(act.id) && (
-                          <span className="text-xs bg-amber-200 text-amber-800 px-1.5 py-0.5 rounded-full flex-shrink-0">לא בתוכנית</span>
-                        )}
-                      </div>
+                      <p className="text-sm font-semibold text-slate-900 truncate">{act.title_he || act.title}</p>
                       <p className="text-xs text-slate-500 truncate mt-0.5">{act.description_he?.slice(0, 55)}...</p>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-xs text-amber-700 font-medium">📍 {Math.round(act.dist)} ק"מ מכאן</span>
@@ -371,7 +363,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
                         {act.is_rainy_day_alt && <span className="text-xs text-blue-500">🌧️ ליום גשום</span>}
                       </div>
                     </div>
-                    <button onClick={() => { addActivity(act.id, true); }}
+                    <button onClick={() => addActivity(act.id, true)}
                       className="flex-shrink-0 bg-amber-500 text-white rounded-xl px-3 py-2 text-xs font-medium flex items-center gap-1">
                       <Plus size={12} /> הוסף
                     </button>
