@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react'
 import { Search, Filter, Check, Clock, Star, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { SEED_ACTIVITIES, OPTIONAL_ACTIVITIES, EXTRA_ACTIVITIES } from '@/lib/seed-data'
+import { SEED_ACTIVITIES, SEED_DAYS, OPTIONAL_ACTIVITIES, EXTRA_ACTIVITIES, FUN_ACTIVITIES } from '@/lib/seed-data'
 import type { Activity, ItineraryDay } from '@/types'
 
 interface Props {
@@ -32,6 +32,7 @@ export default function ExploreClient({ activities, days, tripSlug }: Props) {
     ...SEED_ACTIVITIES,
     ...(OPTIONAL_ACTIVITIES || []),
     ...(EXTRA_ACTIVITIES || []),
+    ...(FUN_ACTIVITIES || []),
   ], [])
 
   // Which activity IDs are in the plan (any day)
