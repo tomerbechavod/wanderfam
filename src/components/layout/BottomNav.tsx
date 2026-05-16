@@ -27,7 +27,7 @@ export default function BottomNav({ tripSlug }: { tripSlug: string }) {
   ]
 
   return (
-    <nav className="bottom-nav bg-white border-t border-sand-200 shadow-bottom-nav">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-sand-200">
       <div className="flex items-stretch max-w-lg mx-auto">
         {items.map(({ href, icon: Icon, label }) => {
           const isActive = pathname === href || (href !== basePath && pathname.startsWith(href))
