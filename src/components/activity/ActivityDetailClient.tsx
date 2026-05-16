@@ -18,19 +18,66 @@ interface Props {
   lang?: 'he' | 'en'
 }
 
-function useWikipediaImage(title: string, existingImages: string[]) {
+// Map activity IDs to good Wikipedia search terms
+const WIKI_SEARCH_TERMS: Record<string, string> = {
+  'act-hallstatt': 'Hallstatt',
+  'act-dachstein': 'Dachstein_Seilbahn',
+  'act-salzburg': 'Hohensalzburg_Fortress',
+  'act-mirabell': 'Mirabell_Palace',
+  'act-zell': 'Zell_am_See',
+  'act-kitzsteinhorn': 'Kitzsteinhorn',
+  'act-wolfgangsee': 'Wolfgangsee',
+  'act-flachau-toboggan': 'Flachau',
+  'act-chiemsee': 'Herrenchiemsee',
+  'act-englischergarten': 'English_Garden,_Munich',
+  'act-deutsches': 'Deutsches_Museum',
+  'act-marienplatz': 'Marienplatz',
+  'act-nymphenburg': 'Nymphenburg_Palace',
+  'opt-hellbrunn': 'Hellbrunn_Palace',
+  'opt-naturmuseum': 'Haus_der_Natur',
+  'opt-hopsiland': 'Planai',
+  'opt-olympiapark': 'Olympiapark_München',
+  'opt-residenz': 'Munich_Residenz',
+  'opt-salzburg-zoo': 'Salzburg_Zoo',
+  'extra-grossglockner': 'Grossglockner_High_Alpine_Road',
+  'extra-werfen': 'Hohenwerfen_Castle',
+  'extra-mondsee': 'Mondsee_(lake)',
+  'extra-schmittenhoe': 'Schmittenhöhe',
+  'extra-kaprun-reservoirs': 'Kaprun',
+  'extra-attersee': 'Attersee_(lake)',
+  'extra-bmw': 'BMW_Welt',
+  'extra-hellabrunn': 'Hellabrunn_Zoo',
+  'extra-olympiapark': 'Olympiapark_München',
+  'extra-residenz': 'Munich_Residenz',
+  'extra-sealife': 'Sea_Life_München',
+  'extra-hofbrauhaus': 'Hofbräuhaus_München',
+  'extra-viktualienmarkt': 'Viktualienmarkt',
+  'extra-frauenkirche': 'Frauenkirche,_Munich',
+  'fun-fantasiana': 'Fantasiana_Erlebnispark',
+  'fun-wasserwelt-wagrain': 'Wagrain',
+  'fun-therme-amade': 'Altenmarkt_im_Pongau',
+  'fun-russbach': 'Russbach_am_Pass_Gschütt',
+  'fun-therme-erding': 'Therme_Erding',
+  'fun-bavaria-filmstadt': 'Bavaria_Filmstudios',
+  'fun-superfly-munich': 'Munich',
+}
+
+function useWikipediaImage(activityId: string, title: string, existingImages: string[]) {
   const [wikiImg, setWikiImg] = useState<string | null>(null)
 
   useEffect(() => {
     if (existingImages && existingImages.length > 0) return
-    const searchTitle = title.replace(/ /g, '_')
-    fetch(`/api/wiki-image?title=${encodeURIComponent(searchTitle)}`)
+
+    // Use specific search term if available, otherwise fall back to title
+    const searchTerm = WIKI_SEARCH_TERMS[activityId] || title.replace(/ /g, '_')
+
+    fetch(`/api/wiki-image?title=${encodeURIComponent(searchTerm)}`)
       .then(r => r.json())
       .then(d => {
         if (d.url) setWikiImg(d.url)
       })
       .catch(() => {})
-  }, [title, existingImages])
+  }, [activityId, title, existingImages])
 
   return wikiImg
 }
@@ -41,7 +88,7 @@ export default function ActivityDetailClient({ activity: a, tripSlug, lang = 'he
   const [showNearby, setShowNearby] = useState(false)
   const [imgIndex, setImgIndex] = useState(0)
 
-  const wikiImg = useWikipediaImage(a.title, a.images || [])
+  const wikiImg = useWikipediaImage(a.id, a.title, a.images || [])
   const allImages = (a.images && a.images.length > 0) ? a.images : (wikiImg ? [wikiImg] : [])
 
   const title = lang === 'he' && a.title_he ? a.title_he : a.title
@@ -217,7 +264,6 @@ export default function ActivityDetailClient({ activity: a, tripSlug, lang = 'he
           </div>
         )}
 
-        {/* כפתורי ניווט */}
         <div className="grid grid-cols-2 gap-2 mb-3">
           <a href={mapsDirectionsLink(a.lat, a.lng)} target="_blank" rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 bg-forest-600 text-white rounded-xl py-3 text-sm font-medium">
