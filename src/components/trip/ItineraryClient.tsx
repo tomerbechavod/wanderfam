@@ -132,8 +132,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
     ? allActivities
         .filter(function(a) {
           return !inDayIds.has(a.id) &&
-                 !inAnyDayIds.has(a.id) &&
-                 a.phase === activeDay.phase
+                 a.phase === activeDay.phase && !inDayIds.has(a.id)
         })
         .map(function(a) {
           return Object.assign({}, a, {
@@ -150,8 +149,8 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
   const inPlanActivities = SEED_ACTIVITIES.filter(function(a) { return inPlanIds.has(a.id) })
   const notInPlanActivities = SEED_ACTIVITIES.filter(function(a) { return !inPlanIds.has(a.id) })
 
-  return (
-    <div>
+ return (
+    <div className="flex gap-3 p-4 bg-white border-t border-sand-200 fixed bottom-16 left-0 right-0 z-20"
       {/* Day chips */}
       <div ref={chipRef}
         className="flex gap-2 px-4 py-3 overflow-x-auto no-scrollbar border-b border-sand-200 bg-white sticky top-14 z-30">
@@ -377,7 +376,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
           )}
 
           {/* Day nav */}
-          <div className="flex gap-3 p-4 bg-white border-t border-sand-200 sticky bottom-16 z-20">
+          <div className="flex gap-3 p-4 bg-white border-t border-sand-200">
             {localDays.findIndex((d) => d.id === activeDayId) > 0 && (
               <button onClick={() => {
                 const idx = localDays.findIndex((d) => d.id === activeDayId)
