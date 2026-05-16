@@ -377,7 +377,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
       )}
 
       {/* Day nav */}
-      <div className="flex gap-3 px-4 py-4 mt-2">
+      <div className="flex gap-3 px-4 py-3 mb-20">
         {activeDayIndex > 0 && (
           <button onClick={() => {
             setActiveDayId(localDays[activeDayIndex - 1].id)
