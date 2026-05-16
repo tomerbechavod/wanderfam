@@ -899,7 +899,7 @@ export const EXTRA_ACTIVITIES: Activity[] = [
   {
     id: 'extra-hellabrunn', trip_id: 'trip-alps-2026',
     title: 'Hellabrunn Zoo Munich', title_he: 'גן החיות הלאברון מינכן',
-    description: 'One of Europe's most innovative geo-zoos. Elephants, giraffes, tigers in spacious natural habitats.',
+    description: 'One of Europe\'s most innovative geo-zoos. Elephants, giraffes, tigers in spacious natural habitats.',
     description_he: 'אחד מגני החיות הוותיקים באירופה — חיות לפי יבשת מוצאן. פילים, ג'ירפות, נמרים.',
     emoji: '🦒', location_name: 'מינכן', region: 'בוואריה', country: 'Germany',
     lat: 48.0969, lng: 11.5539,
