@@ -1,4 +1,4 @@
-import { SEED_ACTIVITIES, OPTIONAL_ACTIVITIES, EXTRA_ACTIVITIES } from '@/lib/seed-data'
+import { SEED_ACTIVITIES, OPTIONAL_ACTIVITIES, EXTRA_ACTIVITIES, FUN_ACTIVITIES } from '@/lib/seed-data'
 import ActivityDetailClient from '@/components/activity/ActivityDetailClient'
 import TopBar from '@/components/layout/TopBar'
 import BottomNav from '@/components/layout/BottomNav'
