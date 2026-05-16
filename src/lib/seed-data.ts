@@ -1196,7 +1196,7 @@ export const FUN_ACTIVITIES: Activity[] = [
     id: 'fun-therme-amade', trip_id: 'trip-alps-2026',
     title: 'Erlebnis-Therme Amadé', title_he: 'תרמה אמדה — פארק מים ורוחת נפש',
     description: 'A massive 30,000m² spa and water park with wave pool, sports pool, unique single looping slide with rocket launch and 8m free fall (only one in Austria!), 5 themed saunas, and brine pools.',
-    description_he: 'תרמה וספא ענקית של 30,000 מ"ר עם בריכת גלים, בריכת ספורט, מגלשת לופינג ייחודית עם שיגור טילים ונפילה חופשית של 8 מ' (היחידה באוסטריה!), 5 סאונות תמטיות ובריכות מלח. ~20 דקות מפלכאו.',
+    description_he: 'תרמה וספא ענקית של 30,000 מ"ר עם בריכת גלים, בריכת ספורט, מגלשת לופינג ייחודית עם שיגור טילים ונפילה חופשית של 8 מטר (היחידה באוסטריה!), 5 סאונות תמטיות ובריכות מלח. ~20 דקות מפלכאו.',
     emoji: '\ud83c\udf0a', location_name: 'אלטנמרקט', region: 'זלצבורג לנד', country: 'Austria',
     lat: 47.3803, lng: 13.4303,
     google_maps_url: 'https://maps.google.com/?q=Erlebnis+Therme+Amade+Altenmarkt',
