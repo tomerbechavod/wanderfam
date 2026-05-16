@@ -24,12 +24,10 @@ function useWikipediaImage(title: string, existingImages: string[]) {
   useEffect(() => {
     if (existingImages && existingImages.length > 0) return
     const searchTitle = title.replace(/ /g, '_')
-    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchTitle)}`)
+    fetch(`/api/wiki-image?title=${encodeURIComponent(searchTitle)}`)
       .then(r => r.json())
       .then(d => {
-        if (d.thumbnail?.source) {
-          setWikiImg(d.thumbnail.source.replace(/\/\d+px-/, '/800px-'))
-        }
+        if (d.url) setWikiImg(d.url)
       })
       .catch(() => {})
   }, [title, existingImages])
