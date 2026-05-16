@@ -127,12 +127,10 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
   const availableMain = SEED_ACTIVITIES.filter(function(a) { return !inDayIds.has(a.id) })
   const availableOptional = [...(OPTIONAL_ACTIVITIES || []), ...(EXTRA_ACTIVITIES || [])].filter(function(a) { return !inAnyDayIds.has(a.id) })
 
-// Nearby: לפי אזור גיאוגרפי — אטרקציות באותו phase שלא בתוכנית
   const nearbySuggestions = activeDay
     ? allActivities
         .filter(function(a) {
-          return !inDayIds.has(a.id) &&
-                 a.phase === activeDay.phase && !inDayIds.has(a.id)
+          return !inDayIds.has(a.id) && a.phase === activeDay.phase
         })
         .map(function(a) {
           return Object.assign({}, a, {
@@ -149,8 +147,10 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
   const inPlanActivities = SEED_ACTIVITIES.filter(function(a) { return inPlanIds.has(a.id) })
   const notInPlanActivities = SEED_ACTIVITIES.filter(function(a) { return !inPlanIds.has(a.id) })
 
- return (
-    <div className="flex gap-3 p-4 bg-white border-t border-sand-200 fixed bottom-16 left-0 right-0 z-20"
+  const activeDayIndex = localDays.findIndex((d) => d.id === activeDayId)
+
+  return (
+    <div className="relative pb-20">
       {/* Day chips */}
       <div ref={chipRef}
         className="flex gap-2 px-4 py-3 overflow-x-auto no-scrollbar border-b border-sand-200 bg-white sticky top-14 z-30">
@@ -342,13 +342,12 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
             )}
           </div>
 
-          {/* Nearby suggestions — עד 20 ק"מ בלבד */}
+          {/* Nearby suggestions */}
           {nearbySuggestions.length > 0 && (
-            <div className="mt-5 mb-2">
+            <div className="mt-5 mb-4">
               <div className="flex items-center gap-2 mb-3">
                 <Navigation size={14} className="text-amber-500" />
-                <h3 className="text-sm font-semibold text-slate-700">קרוב אליך היום</h3>
-                <span className="text-xs text-slate-400">— עד 20 ק"מ, עוד לא בתוכנית</span>
+                <h3 className="text-sm font-semibold text-slate-700">באזור שלך — עוד לא בתוכנית</h3>
               </div>
               <div className="space-y-2">
                 {nearbySuggestions.map((act: any) => (
@@ -359,10 +358,10 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
                       <p className="text-sm font-semibold text-slate-900 truncate">{act.title_he || act.title}</p>
                       <p className="text-xs text-slate-500 truncate mt-0.5">{act.description_he?.slice(0, 55)}...</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-amber-700 font-medium">📍 {Math.round(act.dist)} ק"מ מכאן</span>
+                        <span className="text-xs text-amber-700 font-medium">📍 {Math.round(act.dist)} ק"מ</span>
                         {act.google_rating && <span className="text-xs text-slate-400">⭐ {act.google_rating}</span>}
                         {act.price_level === 'free' && <span className="text-xs text-forest-600">חינם</span>}
-                        {act.is_rainy_day_alt && <span className="text-xs text-blue-500">🌧️ ליום גשום</span>}
+                        {act.is_rainy_day_alt && <span className="text-xs text-blue-500">🌧️</span>}
                       </div>
                     </div>
                     <button onClick={() => addActivity(act.id, true)}
@@ -374,30 +373,28 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
               </div>
             </div>
           )}
-
-          {/* Day nav */}
-          <div className="flex gap-3 p-4 bg-white border-t border-sand-200">
-            {localDays.findIndex((d) => d.id === activeDayId) > 0 && (
-              <button onClick={() => {
-                const idx = localDays.findIndex((d) => d.id === activeDayId)
-                setActiveDayId(localDays[idx - 1].id)
-                setEditMode(false)
-              }} className="flex-1 py-2.5 rounded-xl border border-sand-200 text-sm text-slate-500 bg-white">
-                ← יום קודם
-              </button>
-            )}
-            {localDays.findIndex((d) => d.id === activeDayId) < localDays.length - 1 && (
-              <button onClick={() => {
-                const idx = localDays.findIndex((d) => d.id === activeDayId)
-                setActiveDayId(localDays[idx + 1].id)
-                setEditMode(false)
-              }} className="flex-1 py-2.5 rounded-xl bg-forest-600 text-sm text-white">
-                יום הבא →
-              </button>
-            )}
-          </div>
         </div>
       )}
+
+      {/* Day nav — fixed bottom */}
+      <div className="fixed bottom-16 left-0 right-0 z-20 flex gap-3 px-4 py-3 bg-white border-t border-sand-200">
+        {activeDayIndex > 0 && (
+          <button onClick={() => {
+            setActiveDayId(localDays[activeDayIndex - 1].id)
+            setEditMode(false)
+          }} className="flex-1 py-2.5 rounded-xl border border-sand-200 text-sm text-slate-500 bg-white">
+            ← יום קודם
+          </button>
+        )}
+        {activeDayIndex < localDays.length - 1 && (
+          <button onClick={() => {
+            setActiveDayId(localDays[activeDayIndex + 1].id)
+            setEditMode(false)
+          }} className="flex-1 py-2.5 rounded-xl bg-forest-600 text-sm text-white">
+            יום הבא →
+          </button>
+        )}
+      </div>
     </div>
   )
 }
