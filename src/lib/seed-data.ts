@@ -899,7 +899,7 @@ export const EXTRA_ACTIVITIES: Activity[] = [
   {
     id: 'extra-hellabrunn', trip_id: 'trip-alps-2026',
     title: 'Hellabrunn Zoo Munich', title_he: 'גן החיות הלאברון מינכן',
-    description: 'One of Europe\'s most innovative geo-zoos. Elephants, giraffes, tigers in spacious natural habitats.',
+    description: "One of Europe\'s most innovative geo-zoos. Elephants, giraffes, tigers in spacious natural habitats.",
     description_he: "אחד מגני החיות הוותיקים באירופה — חיות לפי יבשת מוצאן. פילים, ג׳ירפות, נמרים.",
     emoji: '🦒', location_name: 'מינכן', region: 'בוואריה', country: 'Germany',
     lat: 48.0969, lng: 11.5539,
@@ -925,7 +925,7 @@ export const FUN_ACTIVITIES: Activity[] = [
   {
     id: 'fun-fantasiana', trip_id: 'trip-alps-2026',
     title: 'Fantasiana Erlebnispark', title_he: 'פארק השעשועים פנטסיאנה',
-    description: 'One of Austria's largest theme parks with 50+ attractions across 8 themed worlds.',
+    description: "One of Austria's largest theme parks with 50+ attractions across 8 themed worlds.",
     description_he: 'אחד מפארקי השעשועים הגדולים באוסטריה עם 50+ אטרקציות ב-8 עולמות תמטיים. חדש 2026: רכבת הרים Helios! ~45 דקות מפלכאו.',
     emoji: '🎢', location_name: 'שטראסוולכן', region: 'זלצבורג', country: 'Austria',
     lat: 47.9847, lng: 13.3133,
@@ -972,7 +972,7 @@ export const FUN_ACTIVITIES: Activity[] = [
   {
     id: 'fun-therme-erding', trip_id: 'trip-alps-2026',
     title: 'Therme Erding', title_he: 'תרמה ארדינג — פארק המים הגדול בעולם',
-    description: 'The world's largest thermal spa with 28 slides including a 365m tube slide, wave pool and VR slide.',
+    description: "The world's largest thermal spa with 28 slides including a 365m tube slide, wave pool and VR slide.",
     description_he: 'ספא תרמי הגדול בעולם — 28 מגלשות כולל שפופרת 365 מטר, בריכת גלים ומגלשת VR. 30 דקות ממינכן.',
     emoji: '🌊', location_name: 'ארדינג, בוואריה', region: 'בוואריה', country: 'Germany',
     lat: 48.3167, lng: 11.9,
@@ -996,7 +996,7 @@ export const FUN_ACTIVITIES: Activity[] = [
   {
     id: 'fun-bavaria-filmstadt', trip_id: 'trip-alps-2026',
     title: 'Bavaria Filmstadt', title_he: 'עיר הסרטים של בוואריה',
-    description: 'Behind the scenes of one of Europe\'s largest film studios — stunt shows, 4D cinema, Das Boot submarine.',
+    description: "Behind the scenes of one of Europe\'s largest film studios — stunt shows, 4D cinema, Das Boot submarine.",
     description_he: 'מאחורי הקלעים של אחד מאולפני הסרטים הגדולים באירופה — מופעי סטאנטס, 4D, הצוללת Das Boot.',
     emoji: '🎬', location_name: 'מינכן', region: 'בוואריה', country: 'Germany',
     lat: 48.0833, lng: 11.5167,
