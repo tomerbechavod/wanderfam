@@ -141,7 +141,7 @@ export default function ItineraryClient({ days, tripSlug, initialDayId }: Props)
           })
         })
         .sort(function(a, b) { return a.dist - b.dist })
-        .slice(0, 3)
+        .slice(activeDay.day_number % 3, (activeDay.day_number % 3) + 3)
     : []
 
   const inPlanIds = new Set(
