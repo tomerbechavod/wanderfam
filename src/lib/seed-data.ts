@@ -701,10 +701,10 @@ export const SEED_DAYS: ItineraryDay[] = [
     theme: 'כיף ליד הצימר — בלי נסיעות ארוכות',
     base_location: 'Sonnberg Ferienanlage, Flachau', base_lat: 47.3419, base_lng: 13.3891, phase: 'austria',
     slots: [
-      { id: 's5-1', day_id: 'day-5', activity_id: 'act-flachau-toboggan', sort_order: 1, start_time: '10:00', end_time: '12:30', custom_note: 'רק 10 דקות נסיעה מהצימר! קנו צרור ריצות — משתלם הרבה יותר.', status: 'planned', travel_time_from_prev_minutes: 10, is_meal: false, meal_suggestion: null },
-      { id: 's5-2', day_id: 'day-5', activity_id: null, sort_order: 2, start_time: '12:30', end_time: '14:00', custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🥩 צהריים בגסטהאוס מקומי בפלכאו — שניצל ביתי ואווירה אלפינית אמיתית.' },
-      { id: 's5-3', day_id: 'day-5', activity_id: null, sort_order: 3, start_time: '14:30', end_time: '17:00', custom_note: '🏊 בריכה מקומית / אגם הרים לשכשוך וקצת שמש. יום מנוחה מוגדר!', status: 'planned', travel_time_from_prev_minutes: 10, is_meal: false, meal_suggestion: null },
-      { id: 's5-4', day_id: 'day-5', activity_id: null, sort_order: 4, start_time: '19:00', end_time: null, custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🔥 בי-בי-קיו משפחתי בצימר! קנו בשר, גבינות מקומיות ופירות מה-Spar בפלכאו.' },
+      { id: 's5-1', day_id: 'day-5', activity_id: 'fun-wasserwelt-wagrain', sort_order: 1, start_time: '10:00', end_time: '14:00', custom_note: '💦 פארק המים! 15 דקות מהצימר. קנו כרטיסים בכניסה.', status: 'planned', travel_time_from_prev_minutes: 15, is_meal: false, meal_suggestion: null },
+      { id: 's5-2', day_id: 'day-5', activity_id: null, sort_order: 2, start_time: '14:00', end_time: '15:00', custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🍕 ארוחה בתוך פארק המים או מסעדה קרובה.' },
+      { id: 's5-3', day_id: 'day-5', activity_id: 'act-flachau-toboggan', sort_order: 3, start_time: '15:30', end_time: '17:30', custom_note: '🎿 מגלשת הקיץ — 10 דקות מהצימר! שלבו עם פארק המים.', status: 'planned', travel_time_from_prev_minutes: 10, is_meal: false, meal_suggestion: null },
+      { id: 's5-4', day_id: 'day-5', activity_id: null, sort_order: 4, start_time: '19:00', end_time: null, custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🔥 בי-בי-קיו משפחתי בצימר!' },
     ],
   },
   {
@@ -713,9 +713,9 @@ export const SEED_DAYS: ItineraryDay[] = [
     theme: 'אגמות יפים ושקיעה קסומה',
     base_location: 'Sonnberg Ferienanlage, Flachau', base_lat: 47.3419, base_lng: 13.3891, phase: 'austria',
     slots: [
-      { id: 's6-1', day_id: 'day-6', activity_id: null, sort_order: 1, start_time: '10:00', end_time: '13:30', custom_note: '🏊 רחצה ופיקניק ליד אגם מונדזה — ~50 דקות מפלכאו. חוף יפה ופחות עמוס.', status: 'planned', travel_time_from_prev_minutes: 50, is_meal: false, meal_suggestion: null },
-      { id: 's6-2', day_id: 'day-6', activity_id: null, sort_order: 2, start_time: '13:00', end_time: '14:00', custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🥪 פיקניק על שפת האגם — קנו אוכל מראש מהסופר. גבינות, נקניק, לחם טרי ופירות.' },
-      { id: 's6-3', day_id: 'day-6', activity_id: 'act-wolfgangsee', sort_order: 3, start_time: '17:30', end_time: '19:30', custom_note: 'השקיעה מדהימה — 20 דקות נסיעה ממונדזה לסנקט וולפגנג.', status: 'planned', travel_time_from_prev_minutes: 20, is_meal: false, meal_suggestion: null },
+      { id: 's6-1', day_id: 'day-6', activity_id: 'fun-fantasiana', sort_order: 1, start_time: '10:00', end_time: '17:00', custom_note: '🎢 פארק השעשועים! ~45 דקות מפלכאו. הגיעו בפתיחה (10:00).', status: 'planned', travel_time_from_prev_minutes: 45, is_meal: false, meal_suggestion: null },
+      { id: 's6-2', day_id: 'day-6', activity_id: null, sort_order: 2, start_time: '12:30', end_time: '13:30', custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🌭 Western Restaurant בתוך הפארק — שניצל ובורגר.' },
+      { id: 's6-3', day_id: 'day-6', activity_id: null, sort_order: 3, start_time: '18:00', end_time: null, custom_note: '🚗 חזרה לפלכאו ~45 דקות. ערב חופשי.', status: 'planned', travel_time_from_prev_minutes: null, is_meal: false, meal_suggestion: null },
     ],
   },
   {
@@ -725,7 +725,7 @@ export const SEED_DAYS: ItineraryDay[] = [
     base_location: 'Hotel Motel One München-City, Munich', base_lat: 48.1275, base_lng: 11.5979, phase: 'munich',
     slots: [
       { id: 's7-1', day_id: 'day-7', activity_id: null, sort_order: 1, start_time: '09:00', end_time: '10:00', custom_note: '🧳 ארוחת בוקר, אריזה וצ\'ק-אאוט מ-Sonnberg Ferienanlage. תודה פלכאו!', status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: null },
-      { id: 's7-2', day_id: 'day-7', activity_id: 'act-chiemsee', sort_order: 2, start_time: '10:30', end_time: '14:30', custom_note: 'עצירה מושלמת בדרך! חנו בפריאן אם כימזה וקחו מעבורת. ~90 דקות נסיעה מפלכאו.', status: 'planned', travel_time_from_prev_minutes: 90, is_meal: false, meal_suggestion: null },
+      { id: 's7-2', day_id: 'day-7', activity_id: 'fun-therme-erding', sort_order: 2, start_time: '11:00', end_time: '15:00', custom_note: '🌊 תרמה ארדינג — פארק המים הגדול בעולם! על הדרך למינכן, ליד שדה התעופה.', status: 'planned', travel_time_from_prev_minutes: 90, is_meal: false, meal_suggestion: null },
       { id: 's7-3', day_id: 'day-7', activity_id: null, sort_order: 3, start_time: '15:00', end_time: '16:30', custom_note: '🚗 כימזה → מינכן (~1.5 שעה). צ\'ק-אין למלון. תרגישו את השינוי לעיר הגדולה!', status: 'planned', travel_time_from_prev_minutes: null, is_meal: false, meal_suggestion: null },
       { id: 's7-4', day_id: 'day-7', activity_id: 'act-englischergarten', sort_order: 4, start_time: '17:00', end_time: '19:30', custom_note: 'גולשי האייסבאך — תופעה שלא תאמינו שרואים בעיר!', status: 'planned', travel_time_from_prev_minutes: 20, is_meal: false, meal_suggestion: null },
     ],
