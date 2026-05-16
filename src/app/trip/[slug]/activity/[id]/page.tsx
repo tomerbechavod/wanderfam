@@ -13,6 +13,7 @@ export default function ActivityPage({
     ...SEED_ACTIVITIES,
     ...(OPTIONAL_ACTIVITIES ?? []),
     ...(EXTRA_ACTIVITIES ?? []),
+    ...(FUN_ACTIVITIES ?? []),
   ]
 
   const idx = all.findIndex(function(a) { return a.id === params.id })
