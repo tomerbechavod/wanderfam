@@ -325,7 +325,7 @@ export const SEED_ACTIVITIES: Activity[] = [
     tips: 'השקיעה באוגוסט היא בין 19:00 ל-20:00 — הגיעו כשעה לפני. חנו בחניון Seepark הראשי וצעדו כ-5 דקות לטיילת. מלון ויסס רסל (Weisses Rössl) על שפת האגם הוא מהמפורסמים באוסטריה — שווה לשתות שם משהו.',
     family_notes: 'מושלם אחרי יום פעיל — רגוע, קל ויפה. ילדים קטנים נהנים מהאכלת ברווזים על שפת האגם. האגם פתוח לרחצה חינם. טיול ערב קסום.',
     tags: ['lake', 'scenic', 'free', 'sunset', 'relaxed', 'swimming', 'romantic'],
-    images: ['https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800']
+    images: ['https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800'],
     google_rating: 4.6,
     google_review_count: 5600,
     tripadvisor_rating: 4.5,
