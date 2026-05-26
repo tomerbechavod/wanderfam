@@ -195,7 +195,7 @@ export const SEED_ACTIVITIES: Activity[] = [
     tips: 'הצילום הטוב ביותר בבוקר מוקדם לפני ההמונים. עמדו על המדרגות הגדולות ופנו לכיוון המבצר — זה הצילום הקלאסי של זלצבורג.',
     family_notes: 'ילדים אוהבים לרוץ בין ערוגות הפרחים ולחפש את פסלי הגמדים המוסתרים בגן הגמדים. המזרקות הגדולות מושכות ילדים קטנים. ניתן לשלב עם ביקור במבצר — כ-10 דקות הליכה.',
     tags: ['scenic', 'free', 'kids', 'gardens', 'photography'],
-    images: ['https://images.unsplash.com/photo-1597733153203-a54d0fbc47de?w=800']
+    images: ['https://images.unsplash.com/photo-1597733153203-a54d0fbc47de?w=800'],
     google_rating: 4.7,
     google_review_count: 32000,
     tripadvisor_rating: 4.7,
