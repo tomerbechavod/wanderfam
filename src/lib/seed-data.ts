@@ -685,7 +685,7 @@ export const SEED_DAYS: ItineraryDay[] = [
     { id: 's7-1', day_id: 'day-7', activity_id: 'act-deutsches', sort_order: 1, start_time: '09:00', end_time: '13:00', custom_note: '20 דקות מהמלון. קנו כרטיסים אונליין מראש!', status: 'planned', travel_time_from_prev_minutes: 20, is_meal: false, meal_suggestion: null },
       { id: 's7-2', day_id: 'day-7', activity_id: 'act-marienplatz', sort_order: 2, start_time: '13:00', end_time: '14:30', custom_note: 'גלוקנשפיל ב-12:00 — הגיעו 10 דקות מוקדם!', status: 'planned', travel_time_from_prev_minutes: 20, is_meal: false, meal_suggestion: null },
       { id: 's7-3', day_id: 'day-7', activity_id: null, sort_order: 3, start_time: '14:30', end_time: '15:30', custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🥨 שוק ויקטואלינמרקט — ברייצל ענקי ונקניקיות בווריות.' },
-      { id: 's7-4', day_id: 'day-7', activity_id: 'act-nymphenburg', sort_order: 4, start_time: '16:00', end_time: '18:30', custom_note: 'ילדים מתחת לגיל 18 — חינם! שכרו אופניים בכניסה.', status: 'planned', travel_time_from_prev_minutes: 25, is_meal: false, meal_suggestion: null },ev_minutes: 20, is_meal: false, meal_suggestion: null },
+      { id: 's7-4', day_id: 'day-7', activity_id: 'act-nymphenburg', sort_order: 4, start_time: '16:00', end_time: '18:30', custom_note: 'ילדים מתחת לגיל 18 — חינם! שכרו אופניים בכניסה.', status: 'planned', travel_time_from_prev_minutes: 25, is_meal: false, meal_suggestion: null },
     ],
   },
   {
