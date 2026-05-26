@@ -369,7 +369,7 @@ export const SEED_ACTIVITIES: Activity[] = [
     tips: 'קנו צרור ריצות — משתלם הרבה יותר מריצה בודדת. ילדים מתחת לגיל 3 יושבים על ברך ההורה בחינם. שמרו על מרחק בין מזחלות — אל תדביקו את האחד לפניכם.',
     family_notes: 'זה ההייליט של הטיול עבור ילדים רבים! כולם — מגיל 3 ועד 70 — נהנים ומחייכים. ילדים קטנים יכולים לשבת עם הורה. ממש ליד הצימר — 10 דקות נסיעה. שווה לעשות בוקר כיפי לפני צהריים.',
     tags: ['kids', 'adventure', 'fun', 'local', 'family', 'unique'],
-    images: ['https://images.unsplash.com/photo-1516466723877-e4ec1d736c8a?w=800']
+    images: ['https://images.unsplash.com/photo-1516466723877-e4ec1d736c8a?w=800'],
     google_rating: 4.5,
     google_review_count: 1200,
     tripadvisor_rating: 4.4,
