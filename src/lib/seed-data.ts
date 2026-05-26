@@ -666,20 +666,17 @@ export const SEED_DAYS: ItineraryDay[] = [
   },
   {
     id: 'day-6', trip_id: 'trip-alps-2026', date: '2026-08-23', day_number: 6,
-    label: 'וולפגנגזה ומונדזה', label_en: 'Wolfgangsee & Mondsee',
-    theme: 'אגמות יפים ושקיעה קסומה',
+    label: 'נסיעה למינכן דרך תרמה ארדינג', label_en: 'Drive to Munich via Therme Erding',
+    theme: 'פארק המים הגדול בעולם — ואחר כך מינכן!',
     base_location: 'Sonnberg Ferienanlage, Flachau', base_lat: 47.3419, base_lng: 13.3891, phase: 'austria',
     slots: [
-      { id: 's6-1', day_id: 'day-6', activity_id: 'fun-fantasiana', sort_order: 1, start_time: '10:00', end_time: '17:00', custom_note: '🎢 פארק השעשועים! ~45 דקות מפלכאו. הגיעו בפתיחה (10:00).', status: 'planned', travel_time_from_prev_minutes: 45, is_meal: false, meal_suggestion: null },
-      { id: 's6-2', day_id: 'day-6', activity_id: null, sort_order: 2, start_time: '12:30', end_time: '13:30', custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🌭 Western Restaurant בתוך הפארק — שניצל ובורגר.' },
-      { id: 's6-3', day_id: 'day-6', activity_id: null, sort_order: 3, start_time: '18:00', end_time: null, custom_note: '🚗 חזרה לפלכאו ~45 דקות. ערב חופשי.', status: 'planned', travel_time_from_prev_minutes: null, is_meal: false, meal_suggestion: null },
+      { id: 's6-1', day_id: 'day-6', activity_id: null, sort_order: 1, start_time: '09:00', end_time: '10:00', custom_note: '🧳 ארוחת בוקר, אריזה וצ\'ק-אאוט מ-Sonnberg Ferienanlage. תודה פלכאו!', status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: null },
+      { id: 's6-2', day_id: 'day-6', activity_id: 'fun-therme-erding', sort_order: 2, start_time: '11:00', end_time: '15:30', custom_note: '🌊 פארק המים הגדול בעולם! על הדרך למינכן, ליד שדה התעופה.', status: 'planned', travel_time_from_prev_minutes: 90, is_meal: false, meal_suggestion: null },
+      { id: 's6-3', day_id: 'day-6', activity_id: null, sort_order: 3, start_time: '16:30', end_time: '17:30', custom_note: '🚗 ארדינג → מינכן (~30 דקות). צ\'ק-אין למלון.', status: 'planned', travel_time_from_prev_minutes: null, is_meal: false, meal_suggestion: null },
+      { id: 's6-4', day_id: 'day-6', activity_id: 'act-englischergarten', sort_order: 4, start_time: '18:00', end_time: '20:00', custom_note: 'גולשי האייסבאך — תופעה שלא תאמינו שרואים בעיר!', status: 'planned', travel_time_from_prev_minutes: 20, is_meal: false, meal_suggestion: null },
     ],
   },
   {
-    id: 'day-7', trip_id: 'trip-alps-2026', date: '2026-08-24', day_number: 7,
-    label: 'נסיעה למינכן דרך כימזה', label_en: 'Drive to Munich via Chiemsee',
-    theme: 'יום מעבר עם עצירת ארמון מדהימה',
-    base_location: 'Hotel Motel One München-City, Munich', base_lat: 48.1275, base_lng: 11.5979, phase: 'munich',
     slots: [
       { id: 's7-1', day_id: 'day-7', activity_id: null, sort_order: 1, start_time: '09:00', end_time: '10:00', custom_note: '🧳 ארוחת בוקר, אריזה וצ\'ק-אאוט מ-Sonnberg Ferienanlage. תודה פלכאו!', status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: null },
       { id: 's7-2', day_id: 'day-7', activity_id: 'fun-therme-erding', sort_order: 2, start_time: '11:00', end_time: '15:00', custom_note: '🌊 תרמה ארדינג — פארק המים הגדול בעולם! על הדרך למינכן, ליד שדה התעופה.', status: 'planned', travel_time_from_prev_minutes: 90, is_meal: false, meal_suggestion: null },
@@ -689,15 +686,14 @@ export const SEED_DAYS: ItineraryDay[] = [
   },
   {
     id: 'day-8', trip_id: 'trip-alps-2026', date: '2026-08-25', day_number: 8,
-    label: 'יום מינכן', label_en: 'Munich City Day',
-    theme: 'מדע, ארמון, וכיכר מרכזית — כל מינכן ביום',
+    label: 'יום מינכן ב׳', label_en: 'Munich Day 2',
+    theme: 'גן אנגלי, כימזה, ואופציות חופשיות',
     base_location: 'Hotel Motel One München-City, Munich', base_lat: 48.1275, base_lng: 11.5979, phase: 'munich',
     slots: [
-      { id: 's8-1', day_id: 'day-8', activity_id: 'act-deutsches', sort_order: 1, start_time: '09:00', end_time: '13:00', custom_note: '20 דקות מהמלון. קנו כרטיסים אונליין מראש!', status: 'planned', travel_time_from_prev_minutes: 20, is_meal: false, meal_suggestion: null },
-      { id: 's8-2', day_id: 'day-8', activity_id: 'act-marienplatz', sort_order: 2, start_time: '13:00', end_time: '14:30', custom_note: 'גלוקנשפיל ב-12:00 בדיוק — הגיעו 10 דקות מוקדם למקום טוב!', status: 'planned', travel_time_from_prev_minutes: 20, is_meal: false, meal_suggestion: null },
-      { id: 's8-3', day_id: 'day-8', activity_id: null, sort_order: 3, start_time: '14:30', end_time: '15:30', custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🥨 שוק ויקטואלינמרקט — ברייצל ענקי, נקניקיות בווריות, גבינות, ובירה קרה. ארוחת הצהריים הכי בווארית שיש!' },
-      { id: 's8-4', day_id: 'day-8', activity_id: 'act-nymphenburg', sort_order: 4, start_time: '16:00', end_time: '18:30', custom_note: 'ילדים מתחת לגיל 18 — חינם לגמרי! שכרו אופניים בכניסה.', status: 'planned', travel_time_from_prev_minutes: 25, is_meal: false, meal_suggestion: null },
-      { id: 's8-5', day_id: 'day-8', activity_id: null, sort_order: 5, start_time: '19:30', end_time: null, custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🍺 ארוחת ערב אחרונה — Löwenbräukeller או Augustiner an der Frauenkirche. חגגו את הטיול המדהים!' },
+      { id: 's8-1', day_id: 'day-8', activity_id: 'act-chiemsee', sort_order: 1, start_time: '09:00', end_time: '13:30', custom_note: 'אופציה: יום טיול לכימזה — ארמון האי המדהים! ~1 שעה ממינכן.', status: 'planned', travel_time_from_prev_minutes: 60, is_meal: false, meal_suggestion: null },
+      { id: 's8-2', day_id: 'day-8', activity_id: null, sort_order: 2, start_time: '14:00', end_time: '15:00', custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🍽️ ארוחה על האי או בחזרה במינכן.' },
+      { id: 's8-3', day_id: 'day-8', activity_id: 'act-englischergarten', sort_order: 3, start_time: '16:00', end_time: '18:30', custom_note: 'גולשי האייסבאך + בירגארטן Chinese Tower.', status: 'planned', travel_time_from_prev_minutes: 60, is_meal: false, meal_suggestion: null },
+      { id: 's8-4', day_id: 'day-8', activity_id: null, sort_order: 4, start_time: '19:30', end_time: null, custom_note: null, status: 'planned', travel_time_from_prev_minutes: null, is_meal: true, meal_suggestion: '🍺 ארוחת ערב אחרונה — Löwenbräukeller או Augustiner. חגגו את הטיול!' },
     ],
   },
   {
