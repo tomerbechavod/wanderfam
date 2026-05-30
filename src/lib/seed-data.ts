@@ -789,7 +789,7 @@ export const SEED_ACTIVITIES: Activity[] = [
     trip_id: 'trip-alps-2026',
     title: 'Salzwelten Hallein Salt Mine',
     title_he: 'מכרה המלח בהליין',
-    description: 'One of the most exciting underground experiences in Austria — a real working salt mine with miners' train ride, wooden slides, and a raft crossing on an underground salt lake. Kids absolutely love the slides inside the mountain!',
+    description: "One of the most exciting underground experiences in Austria — a real working salt mine with miners' train ride, wooden slides, and a raft crossing on an underground salt lake. Kids absolutely love the slides inside the mountain!",
     description_he: 'אחד החוויות התת-קרקעיות המרגשות ביותר באוסטריה — מכרה מלח אמיתי עם רכבת כורים, מגלשות עץ בתוך ההר ושיט ברפסודה על אגם מלח תת-קרקעי. ילדים פשוט מתים על המגלשות! הטמפרטורה בפנים היא 10°C — הביאו סווטשירט ונעליים סגורות. ~40 דקות מפלכאו, ו-3 דקות ממגלשות קלטנבליץ.',
     emoji: '⛏️',
     location_name: 'הליין',
