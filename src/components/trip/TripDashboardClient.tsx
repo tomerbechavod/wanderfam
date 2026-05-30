@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { format, parseISO, differenceInDays, isToday as dateFnsIsToday } from 'date-fns'
-import { MapPin, Users, Calendar, ChevronRight, Star, Heart } from 'lucide-react'
+import { MapPin, Users, Calendar, ChevronRight, Star, Heart, AlertCircle } from 'lucide-react'
 import { useTripStore } from '@/store/trip-store'
 import ActivityCard from '@/components/activity/ActivityCard'
 import TimelineSlot from '@/components/trip/TimelineSlot'
@@ -14,6 +14,29 @@ interface Props {
   trip: TripWithDays
   activities: Activity[]
 }
+
+const IMPORTANT_TIPS = [
+  {
+    emoji: '🚗',
+    title: 'Vignette — חובה!',
+    text: 'לפני הגבול האוסטרי — עצרו בתחנת דלק וקנו מדבקת כבישים ל-3 הרכבים',
+  },
+  {
+    emoji: '🎫',
+    title: 'Salzburg Card',
+    text: 'קנו ביום זלצבורג (20/8) — כולל כניסה חינם למבצר, מוזיאון הטבע ותחבורה',
+  },
+  {
+    emoji: '📅',
+    title: 'הזמינו מראש',
+    text: 'מכרה מלח הליין (Time Slot 09:00) · תרמה ארדינג · פנטסיאנה',
+  },
+  {
+    emoji: '🌡️',
+    title: 'הביאו מעיל!',
+    text: 'קיצשטיינהורן: 5-10°C בפסגה · מכרה המלח: 10°C בפנים — סווטשירט חובה',
+  },
+]
 
 export default function TripDashboardClient({ trip, activities }: Props) {
   const { setTrip, setDays, setActivities, favoriteIds } = useTripStore()
@@ -91,6 +114,25 @@ export default function TripDashboardClient({ trip, activities }: Props) {
           )}
         </div>
       </div>
+
+      {/* Important Tips */}
+      <section className="mx-4 mb-3">
+        <div className="flex items-center gap-2 mb-2">
+          <AlertCircle size={15} className="text-amber-500" />
+          <h2 className="font-serif text-[17px] font-semibold text-slate-800">טיפים חשובים</h2>
+        </div>
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 space-y-2.5">
+          {IMPORTANT_TIPS.map((tip, i) => (
+            <div key={i} className="flex items-start gap-2.5">
+              <span className="text-xl leading-none mt-0.5">{tip.emoji}</span>
+              <div>
+                <p className="text-sm font-semibold text-amber-900">{tip.title}</p>
+                <p className="text-xs text-amber-700 mt-0.5 leading-relaxed">{tip.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Weather */}
       {weather && displayDay && (
